@@ -1,0 +1,1 @@
+C:\Data\CS Projects\Kinect\KinectSDKtrial\KinectSDKtrial\bin\Debug\KinectSDKtrial.exe.config
