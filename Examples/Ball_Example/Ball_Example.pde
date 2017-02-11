@@ -5,8 +5,14 @@ import org.openkinect.tests.*;
 
 Kinect2 kinect2;
 
+float x;
+float y;
+float easing = 0.05;
+
 void setup() {
   size(512, 424, P3D);
+  noStroke();  
+    
   kinect2 = new Kinect2(this);
  
   kinect2.initDepth();
@@ -17,7 +23,7 @@ void draw() {
   background(0);
   
   PImage img = kinect2.getDepthImage();
-  image(img, 0, 0);
+  //image(img, 0, 0);
   /*
   float skip = 20;
   for(int x = 0; x < img.width; x++){
@@ -32,4 +38,14 @@ void draw() {
     }
   }
   */
+  
+  float targetX = mouseX;
+  float dx = targetX - x;
+  x += dx * easing;
+  
+  float targetY = mouseY;
+  float dy = targetY - y;
+  y += dy * easing;
+  
+  ellipse(x, y, 66, 66);
 }
