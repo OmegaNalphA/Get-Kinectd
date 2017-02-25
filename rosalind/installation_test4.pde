@@ -1,5 +1,7 @@
 int cols, rows;
 int scale = 30;
+final static float TILE_WIDTH = 35;
+float scaleW = TILE_WIDTH;
 int circw = 5;
 int w = 700;
 int h = 500;
@@ -52,18 +54,18 @@ void draw () {
    
    linesL = max(newlinesL, linesL);
    linesR = min(linesR, newlinesR);
-      
+   
+  /*
    if (overRect(0,0,10,height)== true) {
      side = false;   //if enter from left side
    } else if (overRect(width-10,0,width/2,height)== true) {
      side = true; //if enter from right side
-   }
+   } */
    
   // create lines
   //enter left
    fill(255);
    stroke(0);
-   if (side == false) {
      for (int j = 1; j < rows; j++) {
        for (int i = 2; i < linesL; i++) {
          for (int y = j-1; y < j; y++) {
@@ -71,22 +73,29 @@ void draw () {
            for (int x = i-2; x < i; x++) {
              vertex(x*(scale), height - y*(scale), grid[x][y]);
              vertex(x*(scale), height - (y+1)*(scale), grid[x][y]); 
+             if (x > cols - 4) {
              //add color
-              if (linesL >= cols-1){
-                if ((x < newlinesL) && (x > newlinesL+3)){
+             float mx = x*scale;
+             float my =  y*(scale);
+             float X = mx + scaleW;
+             float Y = my;
+             PVector minXY = new PVector(X,Y);
+             PVector maxXY = new PVector(X+scaleW,Y+scaleW);
+             int p_mx = mouseX;
+             int p_my = mouseY;
+             if (minXY.x > p_mx && p_mx < maxXY.x && minXY.y > p_my && p_my < maxXY.y){
                 fill(0,255,0);
-                print("yes");
-                }
-              }
+             }
+             }
            }
            endShape();
          }  
        }
-     }
+     
      
    //enter right
-   
-   } else if (side == true) {
+   /*
+
      for (int j = 1; j < rows; j++) {
      for (int i = cols; ((i >=2) && (i > linesR)); i--) {
          for (int y = j-1; y < j; y++) {
@@ -99,8 +108,8 @@ void draw () {
          }  
        }
      }
-   }
-   
+   */
+     }
     
  }
  
