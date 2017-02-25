@@ -11,13 +11,15 @@ final int totalWidth = 500;
 float minThresh = 480;
 float maxThresh = 830;
 PImage img;
-int Y_AXIS = 1;
-int X_AXIS = 2;
+int kinectSize = 217088;
+int[] depth;
+int[] previous = new int[kinectSize];
+int[] change = new int[kinectSize];
 
 //Variables
 float percentGradientLine;
-color b1, b2, c1, c2;
-int[] change;
+color c1, c2;
+int totalChange;
 
 void setup () {
   size(500, 500);
@@ -27,77 +29,64 @@ void setup () {
   kinect2.initDepth();
   kinect2.initDevice();
   img = createImage(kinect2.depthWidth, kinect2.depthHeight, RGB);
+  previous = kinect2.getRawDepth();
+  change = kinect2.getRawDepth();
+  for(int i = 0; i < kinectSize; i++) {
+    previous[i] = 0;
+    change[i] = 0;
+  }
 }
 
 void draw () {
+
   background(c2);
-  updateGradient(percentGradientLine);
-  percentGradientLine = mouseY/(float)totalHeight * 100;
-  println(percentGradientLine);
+
   img.loadPixels();
-  
-  int[] depth = kinect2.getRawDepth();
-  
-  float sumX = 0;
-  float sumY = 0;
-  float totalPixels = 0;
-  
-  int skip = 16;
-  
-  
-  for (int x = 0; x < kinect2.depthWidth; x++) {
-    for (int y = 0; y < kinect2.depthHeight; y++) {
+
+  depth = kinect2.getRawDepth();
+
+  int skip = 32;
+
+  for (int x = 0; x < kinect2.depthWidth; x+= skip) {
+    for (int y = 0; y < kinect2.depthHeight; y+= skip) {
       int offset = x + y * kinect2.depthWidth;
       int d = depth[offset];
-
-      if (d > minThresh && d < maxThresh && x > 100) {
-        //img.pixels[offset] = color(255, 0, 150);
-         
-        //sumX += x;
-        //sumY += y;
-        //totalPixels++;
-        
+      int delta = abs(previous[offset]-depth[offset]);
+      //println(delta);
+      if (d > minThresh && d < maxThresh && x > 100 && delta > 500) {
+        change[offset] = delta;
+        //println(delta);
       } else {
-        //img.pixels[offset] = color(0);
-      }  
+        change[offset] = 0;
+      }
+      
+      totalChange += change[offset];
     }
   }
-
-  //img.updatePixels();
-  //image(img, 0, 0);
   
-  //float avgX = sumX / totalPixels;
-  //float avgY = sumY / totalPixels;
-  //fill(150,0,255);
-  //ellipse(avgX, avgY, 64, 64);
+  println(totalChange);
+  percentGradientLine += map(totalChange, 0, 1000, 10, 0)/100;
+  println(percentGradientLine);
+  if(percentGradientLine >= 120) percentGradientLine = 0;
+  updateGradient(percentGradientLine); 
   
-  //fill(255);
-  //textSize(32);
-  //text(minThresh + " " + maxThresh, 10, 64);
+  totalChange = 0;
+  previous = depth;
+  change = depth;
 }
 
-void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) {
+void setGradient(int x, int y, float w, float h, color c1, color c2) {
   noFill();
-  if (axis == Y_AXIS) {  // Top to bottom gradient
-    for (int i = y; i <= y+h; i++) {
-      float inter = map(i, y, y+h, 0, 1);
-      color c = lerpColor(c1, c2, inter);
-      stroke(c);
-      line(x, i, x+w, i);
-    }
-  }  
-  else if (axis == X_AXIS) {  // Left to right gradient
-    for (int i = x; i <= x+w; i++) {
-      float inter = map(i, x, x+w, 0, 1);
-      color c = lerpColor(c1, c2, inter);
-      stroke(c);
-      line(i, y, i, y+h);
-    }
+  for (int i = y; i <= y+h; i++) {
+    float inter = map(i, y, y+h, 0, 1);
+    color c = lerpColor(c1, c2, inter);
+    stroke(c);
+    line(x, i, x+w, i);
   }
 }
 
 void updateGradient (float percent) {
   int calculatedHeight = (int)((100-percent)/100 * totalHeight);
-  int newY = totalHeight - calculatedHeight;
-  setGradient(0, newY, totalWidth, calculatedHeight, c2, c1, Y_AXIS);
+  int newY = calculatedHeight;
+  setGradient(0, newY, totalWidth, 20, c2, c1);
 }
