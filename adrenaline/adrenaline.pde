@@ -9,17 +9,21 @@ Kinect2 kinect2;
 final int totalHeight = 500;
 final int totalWidth = 500;
 float minThresh = 480;
-float maxThresh = 830;
+float maxThresh = 2000;
 PImage img;
 int kinectSize = 217088;
 int[] depth;
 int[] previous = new int[kinectSize];
 int[] change = new int[kinectSize];
+double spread = 40;
+int timer = 0;
+
 
 //Variables
 float percentGradientLine;
 color c1, c2;
 int totalChange;
+float increment;
 
 void setup () {
   size(500, 500);
@@ -53,9 +57,9 @@ void draw () {
       int d = depth[offset];
       int delta = abs(previous[offset]-depth[offset]);
       //println(delta);
-      if (d > minThresh && d < maxThresh && x > 100 && delta > 500) {
+      if (d > minThresh && d < maxThresh && x > 100 && delta > 300) {
         change[offset] = delta;
-        //println(delta);
+        println(delta);
       } else {
         change[offset] = 0;
       }
@@ -65,14 +69,34 @@ void draw () {
   }
   
   println(totalChange);
-  percentGradientLine += map(totalChange, 0, 1000, 10, 0)/100;
+  if(totalChange < 500) {
+    totalChange = 0;
+  }
+  
+  increment = -1*(int)map(totalChange, 0, 1000, 10, 0)/100;
+  if(increment > 0) {}
+  println(increment);
+
+  percentGradientLine += increment;
+  //println(percentGradientLine);
+  
+  if(percentGradientLine > 0 && timer %  10 == 0) {    
+    percentGradientLine--;
+  }
+  
+  //println(timer);
   println(percentGradientLine);
-  if(percentGradientLine >= 120) percentGradientLine = 0;
+  
+  //reset to bottom
+  double overflow = 100*(spread/(double)totalHeight);
+  if(percentGradientLine >= 100+overflow) percentGradientLine = 0;
+  //update line
   updateGradient(percentGradientLine); 
   
   totalChange = 0;
   previous = depth;
   change = depth;
+  timer++;
 }
 
 void setGradient(int x, int y, float w, float h, color c1, color c2) {
@@ -88,5 +112,7 @@ void setGradient(int x, int y, float w, float h, color c1, color c2) {
 void updateGradient (float percent) {
   int calculatedHeight = (int)((100-percent)/100 * totalHeight);
   int newY = calculatedHeight;
-  setGradient(0, newY, totalWidth, 20, c2, c1);
+  setGradient(0, newY, totalWidth, (int)spread, c2, c1);
+  fill(c1);  
+  rect(0, calculatedHeight+(int)spread, totalWidth, totalHeight);
 }
