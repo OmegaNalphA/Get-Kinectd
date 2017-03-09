@@ -8,8 +8,9 @@ Kinect2 kinect2;
 //Constants
 final int totalHeight = 500;
 final int totalWidth = 500;
-float minThresh = 480;
+float minThresh = 1000;
 float maxThresh = 2000;
+float threshDivider = (maxThresh-minThresh)/2;
 PImage img;
 int kinectSize = 217088;
 int[] depth;
@@ -19,6 +20,7 @@ double spread = 40;
 int timer = 0;
 
 
+
 //Variables
 float percentGradientLine;
 color c1, c2;
@@ -26,6 +28,7 @@ int totalChange;
 float increment;
 
 void setup () {
+  //fullScreen();
   size(500, 500);
   c1 = color(253, 92, 99);
   c2 = color(41, 171, 226);
@@ -57,9 +60,12 @@ void draw () {
       int d = depth[offset];
       int delta = abs(previous[offset]-depth[offset]);
       //println(delta);
-      if (d > minThresh && d < maxThresh && x > 100 && delta > 300) {
+      if (d > minThresh && d < (minThresh + threshDivider) && delta > 500) {
         change[offset] = delta;
-        println(delta);
+        //println(delta);
+      } else if (d > (maxThresh - threshDivider) && d < maxThresh && delta > 500) {
+        change[offset] = (int)(1.5 * delta);
+        //println("reached");
       } else {
         change[offset] = 0;
       }
@@ -68,14 +74,14 @@ void draw () {
     }
   }
   
-  println(totalChange);
+  //println(totalChange);
   if(totalChange < 500) {
     totalChange = 0;
   }
   
-  increment = -1*(int)map(totalChange, 0, 1000, 10, 0)/100;
+  increment = -1*(int)map(totalChange, 0, 500, 10, 0)/100;
   if(increment > 0) {}
-  println(increment);
+  //println(increment);
 
   percentGradientLine += increment;
   //println(percentGradientLine);
@@ -85,14 +91,22 @@ void draw () {
   }
   
   //println(timer);
-  println(percentGradientLine);
+  //println(percentGradientLine);
   
   //reset to bottom
   double overflow = 100*(spread/(double)totalHeight);
-  if(percentGradientLine >= 100+overflow) percentGradientLine = 0;
   //update line
-  updateGradient(percentGradientLine); 
   
+  updateGradient(percentGradientLine); 
+  if(percentGradientLine >= 100+overflow) {
+    background(c1);
+    updateGradient(0);
+    textSize(64);
+    fill(0, 0, 0);
+    text("yay", 250, 228);
+    delay(3000);
+    percentGradientLine = 0;
+  }
   totalChange = 0;
   previous = depth;
   change = depth;
