@@ -22,7 +22,7 @@ void setup() {
 
 void draw() {
   background(255, 200, 200);
-  textFont(f, 16);
+  textFont(f, 12);
   fill(255);
   img.loadPixels();
   
@@ -47,7 +47,7 @@ void draw() {
     
       if (d > minThresh && d < maxThresh) {
         img.pixels[offset] = color(255, 0, 150);
-        text("hello", x, y); 
+        text("HOTLINE BLING", x, y); 
         sumX += x;
         sumY += y;
         totalPixels++;
