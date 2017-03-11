@@ -18,8 +18,9 @@ int[] previous = new int[kinectSize];
 int[] change = new int[kinectSize];
 double spread = 40;
 int timer = 0;
-
-
+double overflow;
+int countdownTimer = 5000;
+boolean complete = false;
 
 //Variables
 float percentGradientLine;
@@ -45,7 +46,42 @@ void setup () {
 }
 
 void draw () {
+  if(!complete) {
+    getAdrenaline();
+    updateGradient(percentGradientLine);
+  }
+  if(percentGradientLine >= 100+overflow) {
+    startCountdown();
+    victoryMessage();
+  }
+  if(!complete) {
+    totalChange = 0;
+    previous = depth;
+    change = depth;
+    timer++;
+  }
+}
 
+void setGradient(int x, int y, float w, float h, color c1, color c2) {
+  noFill();
+  for (int i = y; i <= y+h; i++) {
+    float inter = map(i, y, y+h, 0, 1);
+    color c = lerpColor(c1, c2, inter);
+    stroke(c);
+    line(x, i, x+w, i);
+  }
+}
+
+void updateGradient (float percent) {
+  int calculatedHeight = (int)((100-percent)/100 * totalHeight);
+  int newY = calculatedHeight;
+  setGradient(0, newY, totalWidth, (int)spread, c2, c1);
+  fill(c1);  
+  rect(0, calculatedHeight+(int)spread, totalWidth, totalHeight);
+}
+
+void getAdrenaline () {
+  
   background(c2);
 
   img.loadPixels();
@@ -89,44 +125,30 @@ void draw () {
   if(percentGradientLine > 0 && timer %  10 == 0) {    
     percentGradientLine--;
   }
-  
   //println(timer);
   //println(percentGradientLine);
   
   //reset to bottom
-  double overflow = 100*(spread/(double)totalHeight);
+  overflow = 100*(spread/(double)totalHeight);
   //update line
-  
-  updateGradient(percentGradientLine); 
-  if(percentGradientLine >= 100+overflow) {
-    background(c1);
-    updateGradient(0);
-    textSize(64);
-    fill(0, 0, 0);
-    text("yay", 250, 228);
-    delay(3000);
-    percentGradientLine = 0;
-  }
-  totalChange = 0;
-  previous = depth;
-  change = depth;
-  timer++;
 }
 
-void setGradient(int x, int y, float w, float h, color c1, color c2) {
-  noFill();
-  for (int i = y; i <= y+h; i++) {
-    float inter = map(i, y, y+h, 0, 1);
-    color c = lerpColor(c1, c2, inter);
-    stroke(c);
-    line(x, i, x+w, i);
-  }
+void victoryMessage () {
+  background(c1);
+  updateGradient(0);
+  textSize(64);
+  fill(0, 0, 0);
+  text("yay", 250, 228);
+  delay(3000);
+  percentGradientLine = 0;
 }
 
-void updateGradient (float percent) {
-  int calculatedHeight = (int)((100-percent)/100 * totalHeight);
-  int newY = calculatedHeight;
-  setGradient(0, newY, totalWidth, (int)spread, c2, c1);
-  fill(c1);  
-  rect(0, calculatedHeight+(int)spread, totalWidth, totalHeight);
+void startCountdown() {
+  if(countdownTimer==5000) {
+    complete = true;
+  }
+  countdownTimer--;
+  if(countdownTimer == 0) {
+    complete = false;
+  }
 }
