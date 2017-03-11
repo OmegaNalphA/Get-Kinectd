@@ -4,7 +4,7 @@ import org.openkinect.processing.*;
 Kinect2 kinect2;
 
 float minThresh = 480;
-float maxThresh = 830;
+float maxThresh = 2048;
 PImage img;
 PFont f; 
 
@@ -21,7 +21,7 @@ void setup() {
 
 
 void draw() {
-  background(0);
+  background(255, 200, 200);
   textFont(f, 16);
   fill(255);
   img.loadPixels();
@@ -39,8 +39,8 @@ void draw() {
   float sumY = 0;
   float totalPixels = 0;
   
-  for (int x = 0; x < kinect2.depthWidth; x+=10) {
-    for (int y = 0; y < kinect2.depthHeight; y+=10) {
+  for (int x = 0; x < kinect2.depthWidth; x+=20) {
+    for (int y = 0; y < kinect2.depthHeight; y+=20) {
       int offset = x + y * kinect2.depthWidth;
       int d = depth[offset];
       
@@ -53,7 +53,7 @@ void draw() {
         totalPixels++;
         
       } else {
-        img.pixels[offset] = color(0);
+        img.pixels[offset] = color(255, 200, 200);
       }  
     }
   }
@@ -71,10 +71,12 @@ void draw() {
   img.updatePixels();
   image(img, 0, 0);
   
+  /*
   float avgX = sumX / totalPixels;
   float avgY = sumY / totalPixels;
   fill(150,0,255);
   ellipse(avgX, avgY, 64, 64);
+  */
   
   //fill(255);
   //textSize(32);

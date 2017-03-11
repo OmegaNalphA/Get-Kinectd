@@ -1,3 +1,13 @@
+import org.openkinect.freenect.*;
+import org.openkinect.freenect2.*;
+import org.openkinect.processing.*;
+import org.openkinect.tests.*;
+
+Kinect2 kinect2;
+
+float minThresh = 480;
+float maxThresh = 2048;
+
 int cols, rows;
 int scale = 30;
 final static float TILE_WIDTH = 35;
@@ -16,7 +26,8 @@ float colorL;
 
 
 void setup () {
-  size (500,300, P3D);
+  size (512,424, P3D);
+  
   cols = w/scale;
   rows = h/scale;
   grid = new float [cols][rows];
