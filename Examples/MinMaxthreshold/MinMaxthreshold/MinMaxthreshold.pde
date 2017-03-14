@@ -7,6 +7,7 @@ float minThresh = 480;
 float maxThresh = 2048;
 PImage img;
 PFont f; 
+String text_arr[] = {"HOTLINE", "1-800", "BLING", "GUD", "RINGGG", "U USED 2", "@ ME", "chill", "phone", "I feel", "fam", "k", "HMU", "luv", "left", "the", "city", "get along"};
 
 void setup() {
   //fullScreen();
@@ -24,6 +25,7 @@ void draw() {
   background(255, 200, 200);
   textFont(f, 12);
   fill(255);
+
   img.loadPixels();
   
   //minThresh = map(mouseX, 0, width, 0, 4500);
@@ -39,15 +41,20 @@ void draw() {
   float sumY = 0;
   float totalPixels = 0;
   
-  for (int x = 0; x < kinect2.depthWidth; x+=20) {
-    for (int y = 0; y < kinect2.depthHeight; y+=20) {
+  int rand;
+  
+  for (int x = 0; x < kinect2.depthWidth; x+=25) {
+    for (int y = 0; y < kinect2.depthHeight; y+=15) {
       int offset = x + y * kinect2.depthWidth;
       int d = depth[offset];
       
     
       if (d > minThresh && d < maxThresh) {
         img.pixels[offset] = color(255, 0, 150);
-        text("HOTLINE BLING", x, y); 
+        //rand = (int)random(18);
+        //println(text_arr[rand]);
+        //text(text_arr[rand], x, y); 
+        text("HELLO", x, y);
         sumX += x;
         sumY += y;
         totalPixels++;
