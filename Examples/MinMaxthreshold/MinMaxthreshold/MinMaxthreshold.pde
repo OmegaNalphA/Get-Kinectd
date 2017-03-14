@@ -7,7 +7,7 @@ float minThresh = 480;
 float maxThresh = 2048;
 PImage img;
 PFont f; 
-String text_arr[] = {"HOTLINE", "1-800", "BLING", "GUD", "RINGGG", "U USED 2", "@ ME", "chill", "phone", "I feel", "fam", "k", "HMU", "luv", "left", "the", "city", "get along"};
+//String text_arr[] = {"HOTLINE", "1-800", "BLING", "GUD", "RINGGG", "U USED 2", "@ ME", "chill", "phone", "I feel", "fam", "k", "HMU", "luv", "left", "the", "city", "get along"};
 
 void setup() {
   //fullScreen();
@@ -37,14 +37,14 @@ void draw() {
     
   //make new pixel object then scale that using.resize
   
-  float sumX = 0;
-  float sumY = 0;
-  float totalPixels = 0;
+  //float sumX = 0;
+  //float sumY = 0;
+  //float totalPixels = 0;
   
   int rand;
   
-  for (int x = 0; x < kinect2.depthWidth; x+=25) {
-    for (int y = 0; y < kinect2.depthHeight; y+=15) {
+  for (int x = 0; x < kinect2.depthWidth; x+=26) {
+    for (int y = 0; y < kinect2.depthHeight; y+=12) {
       int offset = x + y * kinect2.depthWidth;
       int d = depth[offset];
       
@@ -54,10 +54,10 @@ void draw() {
         //rand = (int)random(18);
         //println(text_arr[rand]);
         //text(text_arr[rand], x, y); 
-        text("HELLO", x, y);
-        sumX += x;
-        sumY += y;
-        totalPixels++;
+        text("LA-HACKS", x, y);
+        //sumX += x;
+        //sumY += y;
+        //totalPixels++;
         
       } else {
         img.pixels[offset] = color(255, 200, 200);

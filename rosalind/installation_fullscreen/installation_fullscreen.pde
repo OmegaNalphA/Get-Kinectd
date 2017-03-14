@@ -1,3 +1,10 @@
+import org.openkinect.freenect.*;
+import org.openkinect.freenect2.*;
+import org.openkinect.processing.*;
+import org.openkinect.tests.*;
+
+Kinect2 kinect2;
+
 int cols = 96;
 int rows;
 int scale = 30;
@@ -24,9 +31,16 @@ int savedTime;
 int passedTime;
 int totalTime = 5000;
 
+PImage img;
+
+
 void setup () {
   size (1450, 1000, P3D);
+  kinect2 = new Kinect2(this);
+  kinect2.initDepth();
+  kinect2.initDevice();
   rows = h/scale;
+  img = createImage(kinect2.depthWidth, kinect2.depthHeight, RGB);
   grid = new float [cols][rows];
   colors = new color[cols][rows];
   savedTime = millis();
@@ -43,6 +57,35 @@ void draw () {
   background(255);
   frameRate(60);
   translate(-40, -30);
+ 
+  img.loadPixels();
+  
+  int[] depth = kinect2.getRawDepth();
+  
+  float sumX = 0;
+  float sumY = 0;
+  float totalPixels = 0;
+  
+  for(int x = 0; x < kinect2.depthWidth; x++){
+    for(int y = 0; y < kinect2.depthHeight; y++){
+      int offset = x + y * kinect2.depthWidth;
+      int d = depth[offset];
+      
+      if(d > 480 && d < 830){
+        sumX += x;
+        sumY += y;
+        totalPixels++;
+      }
+    }
+  }
+  
+  float avgX = sumX / totalPixels;
+  float avgY = sumY / totalPixels;
+  
+  int person_box_x = (int) avgX/8;
+  int person_box_y = (int) avgY/8;
+  
+  float person_percise_x = avgX * (width-2)/512;
  
   // animating z coordinate
   move += 0.05;  
