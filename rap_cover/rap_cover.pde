@@ -51,7 +51,7 @@ void draw() {
     
       if (d > minThresh && d < maxThresh) {
         img.pixels[offset] = color(255, 0, 150);
-        //rand = (int)random(18);
+        //rand = (int)random(18)
         //println(text_arr[rand]);
         //text(text_arr[rand], x, y); 
         text("LA-HACKS", x, y);
