@@ -30,6 +30,12 @@ int savedTime;
 int passedTime;
 int totalTime = 5000;
 
+float prev_avgX = 0;
+float prev_avgY = 0;
+
+float smoothX = 0;
+float smoothY = 0;
+
 // Kinect Library object
 Kinect2 kinect2;
 PImage img;
@@ -92,12 +98,12 @@ void draw () {
   sumY = 0;
   totalPixels = 0;
   
-  for(int x = 0; x < kinect2.depthWidth; x++){
-    for(int y = 0; y < kinect2.depthHeight; y++){
+  for(int x = 0; x < kinect2.depthWidth; x+=5){
+    for(int y = 0; y < kinect2.depthHeight; y+=5){
       int offset = x + y * kinect2.depthWidth;
       int d = depth[offset];
       
-      if(d > 480 && d < 830){
+      if(d > 480 && d < 1800){
         sumX += x;
         sumY += y;
         totalPixels++;
@@ -108,16 +114,41 @@ void draw () {
   avgX = sumX / totalPixels;
   avgY = sumY / totalPixels;
   
-  person_box_x = (int) avgX/8;
-  person_box_y = (int) avgY/8;
+  if(Float.isNaN(smoothX)){
+     smoothX = 0; 
+  }
+  if(Float.isNaN(smoothY)){
+     smoothY = 0; 
+  }
+  
+  smoothX = lerp(smoothX, avgX, 0.4);
+  smoothY = lerp(smoothY, avgY, 0.4);
+  
+  //println(avgX + ", " + avgY);
+  //println(smoothX + ", " + smoothY);
+  
+  //if(abs(prev_avgX - avgX) > 60){
+  //   println(abs(prev_avgX - avgX));
+  //  //println("hit");
+  //  avgX = prev_avgX;
+  //  avgY = prev_avgY;
+  //}
+  
+  person_box_x = (int) smoothX/8;
+  person_box_y = (int) smoothY/8;
   
   //println(person_box_x + " " + person_box_y);
   
   fill(255, 79, 79);
   ellipse(person_box_x * scaleW , person_box_y * scale, 32, 32);
   
-  person_p_x = avgX * (width-2)/512;
-  person_p_y = avgY * (height)/424;
+  person_p_x = smoothX * (width)/512;
+  person_p_y = smoothY * (height)/424;
+  
+  //prev_avgX = avgX; 
+  //prev_avgY = avgY;
+  
+  
   // animating z coordinate
   move += 0.05;  
   float yoff = move;
@@ -183,12 +214,12 @@ void draw () {
    
 void linegridL() {
   //float percentl = map(mouseX, 0, width-20, 0, 1);
-  float percentl = map(person_p_x, 0, width-20, 0, 1);
+  float percentl = map(person_p_x, 0, width, 0, 1);
   float linesL = lerp(0, cols, percentl);
   //linesL = max(newlinesL, linesL);'
   
   // set mode to next mode
-  if (linesL > (cols) && mode == 0) {
+  if (linesL >= (cols) && mode == 0) {
     mode=1;
     linesL = 0;
     //newlinesL = 0;
@@ -219,11 +250,13 @@ void linegridL() {
 
 void linegridR() {
   //float percentr = map(mouseX, 0, width-15, 0, 1);
-  float percentr = map(person_p_x, 0, width-15, 0, 1);
+  float percentr = map(person_p_x, 0, width, 0, 1);
   float linesR = lerp(0, cols, percentr);
   //linesR = min(linesR, newlinesR);
   
-  if (linesR < 1 && mode == 0) {
+  mode = 1;
+  
+  if (linesR <= 1 && mode == 0) {
     mode=1;
     linesR = 0;
     //newlinesL = 0;
