@@ -54,7 +54,7 @@ void draw() {
         //rand = (int)random(18)
         //println(text_arr[rand]);
         //text(text_arr[rand], x, y); 
-        text("LA-HACKS", x, y);
+        text("GEEK-WEEK", x, y);
         //sumX += x;
         //sumY += y;
         //totalPixels++;
