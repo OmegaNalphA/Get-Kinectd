@@ -122,17 +122,10 @@ void draw () {
   }
   
   smoothX = lerp(smoothX, avgX, 0.4);
-  smoothY = lerp(smoothY, avgY, 0.4);
+  smoothY = lerp(smoothY, avgY, 0.4) + 16;
   
-  //println(avgX + ", " + avgY);
   //println(smoothX + ", " + smoothY);
-  
-  //if(abs(prev_avgX - avgX) > 60){
-  //   println(abs(prev_avgX - avgX));
-  //  //println("hit");
-  //  avgX = prev_avgX;
-  //  avgY = prev_avgY;
-  //}
+  //println(width);
   
   person_box_x = (int) smoothX/8;
   person_box_y = (int) smoothY/8;
@@ -140,10 +133,11 @@ void draw () {
   //println(person_box_x + " " + person_box_y);
   
   fill(255, 79, 79);
-  ellipse(person_box_x * scaleW , person_box_y * scale, 32, 32);
+  //ellipse(person_box_x * scaleW , person_box_y * scale, 32, 32);
   
   person_p_x = smoothX * (width)/512;
   person_p_y = smoothY * (height)/424;
+  
   
   //prev_avgX = avgX; 
   //prev_avgY = avgY;
@@ -409,7 +403,7 @@ boolean KinectChaos(){
          int offset = x + y * kinect2.depthWidth;
          int d = depth[offset];
          int delta = abs(previous[offset] - depth[offset]);
-         if (d > 480 && d < 830){
+         if (d > 480 && d < 1800){
              if (delta > 500){
                 change[offset] = delta; 
              }
