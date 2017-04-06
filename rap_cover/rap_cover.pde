@@ -4,7 +4,7 @@ import org.openkinect.processing.*;
 Kinect2 kinect2;
 
 float minThresh = 480;
-float maxThresh = 2048;
+float maxThresh = 1800;
 PImage img;
 PFont f; 
 //String text_arr[] = {"HOTLINE", "1-800", "BLING", "GUD", "RINGGG", "U USED 2", "@ ME", "chill", "phone", "I feel", "fam", "k", "HMU", "luv", "left", "the", "city", "get along"};
@@ -41,7 +41,7 @@ void draw() {
   //float sumY = 0;
   //float totalPixels = 0;
   
-  int rand;
+  //int rand;
   
   for (int x = 0; x < kinect2.depthWidth; x+=26) {
     for (int y = 0; y < kinect2.depthHeight; y+=12) {

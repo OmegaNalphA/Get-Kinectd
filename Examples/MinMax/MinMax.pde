@@ -4,7 +4,7 @@ import org.openkinect.processing.*;
 Kinect2 kinect2;
 
 float minThresh = 480;
-float maxThresh = 830;
+float maxThresh = 1500;
 PImage img;
 
 void setup() {
@@ -17,7 +17,7 @@ void setup() {
 
 
 void draw() {
-  background(0);
+  background(50);
 
   img.loadPixels();
   
@@ -37,7 +37,7 @@ void draw() {
       int offset = x + y * kinect2.depthWidth;
       int d = depth[offset];
 
-      if (d > minThresh && d < maxThresh && x > 100) {
+      if (d > minThresh && d < maxThresh) {
         img.pixels[offset] = color(255, 0, 150);
          
         sumX += x;
